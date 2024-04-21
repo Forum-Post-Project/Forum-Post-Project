@@ -25,17 +25,17 @@ def change_private_status():
     pass
 
 
-@categories_router.put("/{id}/read_access") #User ID given in Body. Can be reworked in URL if needed.
+@categories_router.put("/{id}/read_access/{user_id}")
 def change_read_access():
     pass
 
 
-@categories_router.put("/{id}/write_access") #User ID given in Body. Can be reworked in URL if needed.
+@categories_router.put("/{id}/write_access/{user_id}")
 def change_write_access():
     pass
 
 
-@categories_router.put("/{id}/access_revocation") #User ID given in Body. Can be reworked in URL if needed.
+@categories_router.put("/{id}/access_revocation/{user_id}")
 def revoke_access():
     pass
 
