@@ -35,7 +35,7 @@ def change_write_access():
     pass
 
 
-@categories_router.put("/{id}/access_removal/{user_id}")
+@categories_router.put("/{id}/remove_access/{user_id}")
 def revoke_access():
     pass
 
