@@ -1,5 +1,6 @@
 from fastapi import APIRouter
 from pydantic import BaseModel
+from services import users_service
 
 
 users_router = APIRouter(prefix="/users")
@@ -10,6 +11,11 @@ def user_login():
     pass
 
 
-@users_router.post("/registration")
+@users_router.get("/info")
+def user_info():
+    pass
+
+
+@users_router.post("/register")
 def register_user():
     pass
