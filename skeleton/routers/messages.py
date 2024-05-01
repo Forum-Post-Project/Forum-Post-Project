@@ -5,7 +5,7 @@ from pydantic import BaseModel
 messages_router = APIRouter(prefix="/messages/users")
 
 
-@messages_router.post("/{sender_id}/{receiver_id}") #Receiver ID in Body. May refactor ID in URL if needed.
+@messages_router.post("/{sender_id}/{receiver_id}")
 def create_new_message():
     pass
 

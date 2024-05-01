@@ -1,5 +1,5 @@
 from data.database import insert_query, read_query
-from data.models import Order, Role, User
+from data.models import User
 from mariadb import IntegrityError
 
 
@@ -13,7 +13,7 @@ _SEPARATOR = ';'
 
 def find_by_username(username: str) -> User | None:
     data = read_query(
-        'SELECT id, username, password, role FROM users WHERE username = ?',
+        'SELECT user_id, username, password, email, name FROM users WHERE username = ?',
         (username,))
 
     return next((User.from_query_result(*row) for row in data), None)
@@ -26,30 +26,26 @@ def try_login(username: str, password: str) -> User | None:
     return user if user and user.password == password else None
 
 
-def create(username: str, password: str) -> User | None:
+def create(username: str, password: str, email: str, name: str) -> User | None:
     # password = _hash_password(password)
     try:
         generated_id = insert_query(
-            'INSERT INTO users(username, password, role) VALUES (?,?,?)',
-            (username, password, Role.CUSTOMER))
+            'INSERT INTO users(username, password, email, name) VALUES (?,?,?,?)',
+            (username, password, email, name))
 
-        return User(id=generated_id, username=username, password='', role=Role.CUSTOMER)
+        return User(id=generated_id, username=username, password='', email=email, name=name)
 
     except IntegrityError:
-        # mariadb raises this error when a constraint is violated
-        # in that case we have duplicate usernames
         return None
 
 
 def create_token(user: User) -> str:
-    # note: this token is not particulary secure, use JWT for real-world uses
     return f'{user.id}{_SEPARATOR}{user.username}'
 
 
 def is_authenticated(token: str) -> bool:
     return any(read_query(
-        'SELECT 1 FROM users where id = ? and username = ?',
-        # note: this token is not particulary secure, use JWT for real-world user
+        'SELECT 1 FROM users where user_id = ? and username = ?',
         token.split(_SEPARATOR)))
 
 
@@ -57,7 +53,3 @@ def from_token(token: str) -> User | None:
     _, username = token.split(_SEPARATOR)
 
     return find_by_username(username)
-
-
-def owns_order(user: User, order: Order) -> bool:
-    return order.user_id == user.id

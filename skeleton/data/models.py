@@ -47,7 +47,7 @@ class Vote(BaseModel):
     id: int
     reply_id: int
     user_id: int
-    vote_type: bool # This way will be easier instead of str, but can refactor if needed.
+    vote_type: bool | None
 
 
 class Message(BaseModel):
@@ -74,10 +74,10 @@ class User(BaseModel):
     password: str = constr(pattern="^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$")
     email: str = constr(pattern="^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$")
     name: str = constr(pattern="^\w{2,25}$")
-    is_admin: bool # Should make new column in database. Easy way to determine user role. Not accessible by users.
+    is_admin: bool = False
 
     @classmethod
-    def from_query_result(cls, user_id, username, password, email, name, is_admin):
+    def from_query_result(cls, user_id, username, password, email, name, is_admin=False):
         return cls(
             id=user_id,
             username=username,
@@ -86,3 +86,10 @@ class User(BaseModel):
             name=name,
             is_admin=is_admin
         )
+
+
+class LoginInformation(BaseModel):
+    username: str
+    password: str
+    email: str = None or None
+    name: str = None or None

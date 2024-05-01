@@ -2,7 +2,7 @@ from fastapi import APIRouter
 from pydantic import BaseModel
 
 
-categories_router = APIRouter(prefix="/category")
+categories_router = APIRouter(prefix="/categories")
 
 
 @categories_router.get("/")
