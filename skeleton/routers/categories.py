@@ -1,7 +1,8 @@
 from fastapi import APIRouter
 from pydantic import BaseModel
 from services import categories_service
-from common.responses import NotFound
+from common.responses import NotFound, BadRequest
+from data.models import Category
 
 categories_router = APIRouter(prefix="/categories")
 
@@ -16,7 +17,7 @@ def get_all_categories():
     return categories
 
 
-@categories_router.get("/{category_id}")  # todo
+@categories_router.get("/{category_id}")
 def get_category_by_id(category_id: int):
     category = categories_service.get_category_by_id(category_id)
 
@@ -27,8 +28,11 @@ def get_category_by_id(category_id: int):
 
 
 @categories_router.post("/")
-def create_category(name: str):
-    created_category = categories_service.create_category(name)
+def create_category(category: Category):
+    if not category.name:
+        return BadRequest(content="Category name is required in order to create a category!")
+
+    created_category = categories_service.create_category(category)
 
     return created_category
 

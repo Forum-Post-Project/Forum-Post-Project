@@ -14,7 +14,7 @@ def get_all_categories() -> list[Category] or None:
     return categories
 
 
-def get_category_by_id(category_id: int, search: str = None, sort: str = None) -> Category or None:  # todo
+def get_category_by_id(category_id: int, search: str = None, sort: str = None) -> Category or None:  # todo finish pagination
     category_query = """select category_id, name, is_locked, is_private from categories where category_id = ?"""
     topic_query = """select topic_id, title, category_id, user_id, creation_date, best_reply, is_locked from topics 
     where category_id = ?"""
@@ -44,13 +44,10 @@ def get_category_by_id(category_id: int, search: str = None, sort: str = None) -
     return category
 
 
-def create_category(name: str):
-    if not name:
-        return BadRequest(content="Category name is required in order to create a category!")
-
+def create_category(category: Category):
     query = """insert into categories (name) values (?)"""
-    params = (name,)
+    params = (category.name,)
 
     category_id = insert_query(query, params)
-
-    return CreatedSuccessfully(content=f"Category with id:{category_id} created successfully!")
+    category.category_id = category_id
+    return category, CreatedSuccessfully(content=f"Category with id:{category_id} created successfully!")

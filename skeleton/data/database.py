@@ -8,7 +8,7 @@ def get_connection() -> Connection:
         password="6527",
         host="localhost",
         port=3306,
-        database="NEW_Forum_Post_Project"
+        database="forum_post"
     )
 
 # def get_connection() -> Connection:
