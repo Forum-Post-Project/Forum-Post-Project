@@ -1,5 +1,5 @@
 from fastapi import FastAPI
-from routers.category import categories_router
+from routers.categories import categories_router
 from routers.messages import messages_router
 from routers.replies import replies_router
 from routers.topics import topics_router

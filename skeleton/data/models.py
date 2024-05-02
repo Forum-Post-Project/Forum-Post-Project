@@ -25,7 +25,7 @@ class Category(BaseModel):
     name: str = constr(pattern="^\w{1,50}$")
     is_locked: bool
     is_private: bool
-    topics_list: list[Topic]
+    topics_list: list[Topic] or None
 
     @classmethod
     def from_query_result(cls, id, name, is_locked, is_private, topics_list=None):
@@ -37,7 +37,6 @@ class Category(BaseModel):
             is_locked=is_locked,
             is_private=is_private,
             topics_list=topics_list
-
         )
 
 
