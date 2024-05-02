@@ -89,10 +89,10 @@ class User(BaseModel):
     password: str = constr(pattern="^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$")
     email: str = constr(pattern="^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$")
     name: str = constr(pattern="^\w{2,25}$")
-    is_admin: bool = False
+    is_admin: bool
 
     @classmethod
-    def from_query_result(cls, user_id, username, password, email, name, is_admin=False):
+    def from_query_result(cls, user_id, username, password, email, name, is_admin):
         return cls(
             id=user_id,
             username=username,
@@ -108,3 +108,4 @@ class LoginInformation(BaseModel):
     password: str
     email: str = None or None
     name: str = None or None
+    is_admin: bool

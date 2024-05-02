@@ -13,7 +13,7 @@ _SEPARATOR = ';'
 
 def find_by_username(username: str) -> User | None:
     data = read_query(
-        'SELECT user_id, username, password, email, name FROM users WHERE username = ?',
+        'SELECT user_id, username, password, email, name, is_admin FROM users WHERE username = ?',
         (username,))
 
     return next((User.from_query_result(*row) for row in data), None)
@@ -26,14 +26,14 @@ def try_login(username: str, password: str) -> User | None:
     return user if user and user.password == password else None
 
 
-def create(username: str, password: str, email: str, name: str) -> User | None:
+def create(username: str, password: str, email: str, name: str, is_admin: int) -> User | None:
     # password = _hash_password(password)
     try:
         generated_id = insert_query(
-            'INSERT INTO users(username, password, email, name) VALUES (?,?,?,?)',
-            (username, password, email, name))
+            'INSERT INTO users(username, password, email, name, is_admin) VALUES (?,?,?,?,?)',
+            (username, password, email, name, is_admin))
 
-        return User(id=generated_id, username=username, password='', email=email, name=name)
+        return User(id=generated_id, username=username, password='', email=email, name=name, is_admin=is_admin)
 
     except IntegrityError:
         return None

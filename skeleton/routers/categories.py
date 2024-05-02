@@ -1,8 +1,9 @@
-from fastapi import APIRouter
+from fastapi import APIRouter, Header
 from pydantic import BaseModel
 from services import categories_service
-from common.responses import NotFound, BadRequest
+from common.responses import NotFound, BadRequest, Forbidden
 from data.models import Category
+from common.authentication import get_user_or_raise_401
 
 categories_router = APIRouter(prefix="/categories")
 
@@ -33,7 +34,11 @@ def get_category_by_id(category_id: int,
 
 
 @categories_router.post("/")
-def create_category(category: Category):
+def create_category(category: Category, token: str = Header()):
+    user = get_user_or_raise_401(token)
+
+    if not user.is_admin:
+        return Forbidden("User is not authorized to create a category! Admin-only action!")
     if not category.name:
         return BadRequest(content="Category name is required in order to create a category!")
 

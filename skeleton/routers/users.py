@@ -23,11 +23,11 @@ async def user_login(data: LoginInformation):
 async def user_info(token: str = Header()):
     user = get_user_or_raise_401(token)
 
-    return {"id": user.id, "username": user.username}
+    return {"id": user.id, "username": user.username, "is_admin": user.is_admin}
 
 
 @users_router.post("/register")
 async def register_user(data: LoginInformation):
-    user = users_service.create(data.username, data.password, data.email, data.name)
+    user = users_service.create(data.username, data.password, data.email, data.name, data.is_admin)
 
     return user if user else BadRequest(f'Username "{data.username}" is already taken!')
