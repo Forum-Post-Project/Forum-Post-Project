@@ -30,4 +30,4 @@ async def user_info(token: str = Header()):
 async def register_user(data: LoginInformation):
     user = users_service.create(data.username, data.password, data.email, data.name)
 
-    return user if user else BadRequest(f"The Username {data.username} is already taken!")
+    return user if user else BadRequest(f'Username "{data.username}" is already taken!')
