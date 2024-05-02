@@ -22,8 +22,8 @@ def get_all_categories():
 def get_category_by_id(category_id: int,
                        search: str = None,
                        sort: str = None,
-                       page: int = 1 or None,
-                       page_size: int = 10 or None):
+                       page: int = None,
+                       page_size: int = 10):
     category = categories_service.get_category_by_id(category_id, search=search, sort=sort, page=page,
                                                      page_size=page_size)
 

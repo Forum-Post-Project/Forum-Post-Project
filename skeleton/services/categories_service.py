@@ -17,8 +17,8 @@ def get_all_categories() -> list[Category] or None:
 def get_category_by_id(category_id: int,
                        search: str = None,
                        sort: str = None,
-                       page: int = 1 or None,
-                       page_size: int = 10 or None) -> Category or None:
+                       page: int = None,
+                       page_size: int = 10) -> Category or None:
     category_query = """select category_id, name, is_locked, is_private from categories where category_id = ?"""
     topic_query = """select topic_id, title, category_id, user_id, creation_date, best_reply, is_locked from topics 
     where category_id = ?"""
