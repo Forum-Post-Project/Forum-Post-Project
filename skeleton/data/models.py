@@ -2,11 +2,6 @@ from pydantic import BaseModel, constr
 from datetime import date
 
 
-class Category(BaseModel):
-    id: int
-    name: str = constr(pattern="^\w{1,50}$")
-
-
 class Topic(BaseModel):
     id: int
     title: str = constr(pattern="^\w{1,100}$")
@@ -23,6 +18,28 @@ class Topic(BaseModel):
             user_id=user_id,
             creation_date=creation_date
         )
+
+
+class Category(BaseModel):
+    id: int
+    name: str = constr(pattern="^\w{1,50}$")
+    is_locked: bool
+    is_private: bool
+    topics_list: list[Topic]
+
+    @classmethod
+    def from_query_result(cls, id, name, is_locked, is_private, topics_list=None):
+        if topics_list is None:
+            topics_list = []
+        return cls(
+            id=id,
+            name=name,
+            is_locked=is_locked,
+            is_private=is_private,
+            topics_list=topics_list
+
+        )
+
 
 
 class Reply(BaseModel):

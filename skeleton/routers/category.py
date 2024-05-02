@@ -1,23 +1,36 @@
 from fastapi import APIRouter
 from pydantic import BaseModel
-
+from services import categories_service
+from common.responses import NotFound
 
 categories_router = APIRouter(prefix="/categories")
 
 
 @categories_router.get("/")
 def get_all_categories():
-    pass
+    categories = categories_service.get_all_categories()
+
+    if not categories:
+        return NotFound(content="No categories found!")
+
+    return categories
 
 
-@categories_router.get("/{id}")
-def get_category_by_id():
-    pass
+@categories_router.get("/{category_id}")  # todo
+def get_category_by_id(category_id: int):
+    category = categories_service.get_category_by_id(category_id)
+
+    if not category:
+        return NotFound(content=f"Category with id:{category_id} does not exist!")
+
+    return category
 
 
 @categories_router.post("/")
-def create_category():
-    pass
+def create_category(name: str):
+    created_category = categories_service.create_category(name)
+
+    return created_category
 
 
 @categories_router.put("/{id}/private")
@@ -36,7 +49,7 @@ def change_write_access():
 
 
 @categories_router.put("/{id}/remove_access/{user_id}")
-def revoke_access():
+def remove_access():
     pass
 
 

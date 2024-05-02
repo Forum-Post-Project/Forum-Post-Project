@@ -15,16 +15,19 @@ async def user_login(data: LoginInformation):
     if user:
         token = users_service.create_token(user)
         return {"token": token}
+
     return BadRequest("Login information not valid!")
 
 
 @users_router.get("/info")
 async def user_info(token: str = Header()):
     user = get_user_or_raise_401(token)
+
     return {"id": user.id, "username": user.username}
 
 
 @users_router.post("/register")
 async def register_user(data: LoginInformation):
     user = users_service.create(data.username, data.password, data.email, data.name)
+
     return user if user else BadRequest(f"The Username {data.username} is already taken!")
