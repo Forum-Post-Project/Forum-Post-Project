@@ -25,7 +25,7 @@ def get_category_by_id(category_id: int,
     params = (category_id,)
 
     if search:
-        topic_query += " and name like ?"
+        topic_query += " and title like ?"
         params += (f'%{search}%',)
 
     if sort:
