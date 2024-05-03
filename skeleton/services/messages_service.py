@@ -8,7 +8,10 @@ def create_message(text: str, sender_id: int, receiver_id: int) -> Message:
     query = """insert into messages (text, sender_id, receiver_id, creation_date) values (?, ?, ?, ?)"""
     params = (text, sender_id, receiver_id, datetime.now())
     message_id = insert_query(query, params)
-    return Message(id=message_id, text=text, sender_id=sender_id, receiver_id=receiver_id, creation_date=params[-1])
+    if message_id:
+        return Message(id=message_id, text=text, sender_id=sender_id, receiver_id=receiver_id, creation_date=params[-1])
+    else:
+        return None
 
 
 def get_conversation(sender_id: int, receiver_id: int) -> list[Message]:
