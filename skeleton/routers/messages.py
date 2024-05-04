@@ -8,7 +8,7 @@ messages_router = APIRouter(prefix="/messages/users")
 
 
 @messages_router.post("/{receiver_id}", response_model=Message)
-def create_new_message(receiver_id: int, message: Message, token: str = Header(...)):
+def create_new_message(receiver_id: int, message: Message, token: str = Header()):
 
     sender_id = get_user_or_raise_401(token).id
 
@@ -21,7 +21,7 @@ def create_new_message(receiver_id: int, message: Message, token: str = Header(.
 
 
 @messages_router.get("/{receiver_id}", response_model=list[Message])
-def get_conversation(receiver_id: int, token: str = Header(...)):
+def get_conversation(receiver_id: int, token: str = Header()):
 
     sender_id = get_user_or_raise_401(token).id
 
@@ -30,7 +30,7 @@ def get_conversation(receiver_id: int, token: str = Header(...)):
 
 
 @messages_router.get("/receivers", response_model=list[Message])
-def get_all_conversations(token: str = Header(...)):
+def get_all_conversations(token: str = Header()):
 
     sender_id = get_user_or_raise_401(token).id
 
