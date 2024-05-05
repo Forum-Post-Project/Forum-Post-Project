@@ -1,5 +1,5 @@
 from pydantic import BaseModel, constr
-from datetime import date
+from datetime import datetime, date
 
 
 class Topic(BaseModel):
@@ -7,16 +7,20 @@ class Topic(BaseModel):
     title: str = constr(pattern="^\w{1,100}$")
     category_id: int
     user_id: int
-    creation_date: date
+    creation_date: datetime
+    best_reply: int | None = None
+    is_locked: bool = False
 
     @classmethod
-    def from_query_result(cls, topic_id, title, category_id, user_id, creation_date):
+    def from_query_result(cls, topic_id, title, category_id, user_id, creation_date, best_reply, is_locked):
         return cls(
             id=topic_id,
             title=title,
             category_id=category_id,
             user_id=user_id,
-            creation_date=creation_date
+            creation_date=creation_date,
+            best_reply=best_reply,
+            is_locked=is_locked
         )
 
 
@@ -25,7 +29,7 @@ class Category(BaseModel):
     name: str = constr(pattern="^\w{1,50}$")
     is_locked: bool
     is_private: bool
-    topics_list: list[Topic] or None
+    topics_list: list[Topic] | None = None
 
     @classmethod
     def from_query_result(cls, category_id, name, is_locked, is_private, topics_list=None):

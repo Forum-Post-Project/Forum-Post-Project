@@ -61,4 +61,4 @@ def create_category(category: Category):
 
     category_id = insert_query(query, params)
     category.category_id = category_id
-    return category, CreatedSuccessfully(content=f"Category with id:{category_id} created successfully!")
+    return category #, CreatedSuccessfully(content=f"Category with id:{category_id} created successfully!")

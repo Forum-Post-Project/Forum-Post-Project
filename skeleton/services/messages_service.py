@@ -4,7 +4,7 @@ from common.responses import CreatedSuccessfully
 from datetime import datetime
 
 
-def create_message(text: str, sender_id: int, receiver_id: int) -> Message:
+def create_message(text: str, sender_id: int, receiver_id: int) -> Message or None:
     query = """insert into messages (text, sender_id, receiver_id, creation_date) values (?, ?, ?, ?)"""
     params = (text, sender_id, receiver_id, datetime.now())
     message_id = insert_query(query, params)
