@@ -15,11 +15,6 @@ class CreateTopic(BaseModel):
     category_id: int
 
 
-# class TopicWithReplies(BaseModel):
-#     title: str
-#     replies: list[Reply | None]
-
-
 @topics_router.get("/")
 def get_all_topics(search: Optional[str] = None, sort_by: Optional[str] = None,
                    limit: int = 10, offset: int = 0):
@@ -28,8 +23,11 @@ def get_all_topics(search: Optional[str] = None, sort_by: Optional[str] = None,
 
 
 @topics_router.get("/{id}")
-def get_topic_by_id():
-    pass
+def get_topic_by_id(id: int):
+    topic = topics_services.get_topic_with_replies(id)
+    if not topic:
+        return NotFound(content=f"Topic with id:{id} does not exist!")
+    return topic
 
 
 @topics_router.post("/")
