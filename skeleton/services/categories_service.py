@@ -59,6 +59,7 @@ def get_category_by_id(category_id: int,
         topics=topics_list
     )
 
+    print(category_with_topics)
     return category_with_topics
 
 

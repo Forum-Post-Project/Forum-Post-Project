@@ -8,7 +8,7 @@ from common.authentication import get_user_or_raise_401
 categories_router = APIRouter(prefix="/categories")
 
 
-@categories_router.get("/", response_model=list[Category])
+@categories_router.get("/")
 def get_all_categories():
     categories = categories_service.get_all_categories()
 
@@ -18,7 +18,7 @@ def get_all_categories():
     return categories
 
 
-@categories_router.get("/{category_id}", response_model=Category)
+@categories_router.get("/{category_id}")
 def get_category_by_id(category_id: int,
                        search: str = None,
                        sort: str = None,
