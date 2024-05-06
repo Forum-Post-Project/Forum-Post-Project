@@ -46,4 +46,4 @@ def lock_topic(id: int, token: str = Header()):
         return NotFound(content="Topic not found")
 
     topics_services.lock_topic(id)
-    return {"message": "Topic locked successfully"}
+    return {"message": f"Topic with id:{id} locked successfully"}

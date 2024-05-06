@@ -24,26 +24,26 @@ def create_topic(title: str, category_id: int, user_id) -> Topic or None:
 
 
 def get_all_topics(search: str = None, sort_by: str = None, limit: int = 10, offset: int = 0):
-    base_query = "SELECT * FROM topics"
+    base_query = """select * from topics"""
     if search:
-        base_query += f" WHERE title LIKE '%{search}%'"
+        base_query += f""" where title like '%{search}%'"""
     if sort_by:
-        base_query += f" ORDER BY {sort_by}"
+        base_query += f""" order by {sort_by}"""
 
-    base_query += f" LIMIT {limit} OFFSET {offset}"
+    base_query += f""" limit {limit} offset {offset}"""
     query_result = read_query(base_query)
     topics = [Topic.from_query_result(*row) for row in query_result]
     return topics
 
 
 def get_topic_with_replies(topic_id: int):
-    topic_query = "SELECT title FROM topics WHERE topic_id = ?"
+    topic_query = """select title from topics where topic_id = ?"""
     topic_result = read_query(topic_query, (topic_id,))
     if not topic_result:
         return None
     topic_title = topic_result[0][0]
 
-    reply_query = "SELECT * FROM replies WHERE topic_id = ?"
+    reply_query = """select * from replies where topic_id = ?"""
     reply_result = read_query(reply_query, (topic_id,))
     replies = [Reply.from_query_result(*reply_data) for reply_data in reply_result]
     topic = TopicWithReplies(title=topic_title, replies=replies)
@@ -51,7 +51,7 @@ def get_topic_with_replies(topic_id: int):
 
 
 def get_topic(topic_id: int):
-    query = "SELECT * FROM topics WHERE topic_id = ?"
+    query = """select * from topics where topic_id = ?"""
     result = read_query(query, (topic_id,))
     if result:
         return result[0]
@@ -60,5 +60,5 @@ def get_topic(topic_id: int):
 
 
 def lock_topic(topic_id: int):
-    query = "UPDATE topics SET is_locked = 1 WHERE topic_id = ?"
+    query = """update topics set is_locked = 1 where topic_id = ?"""
     update_query(query, (topic_id,))

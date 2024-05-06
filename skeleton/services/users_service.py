@@ -13,7 +13,7 @@ _SEPARATOR = ';'
 
 def find_by_username(username: str) -> User | None:
     data = read_query(
-        'SELECT user_id, username, password, email, name, is_admin FROM users WHERE username = ?',
+        """select user_id, username, password, email, name, is_admin from users where username = ?""",
         (username,))
 
     return next((User.from_query_result(*row) for row in data), None)
@@ -30,7 +30,7 @@ def create(username: str, password: str, email: str, name: str) -> User | None:
     # password = _hash_password(password)
     try:
         generated_id = insert_query(
-            'INSERT INTO users(username, password, email, name) VALUES (?,?,?,?)',
+            """insert into users(username, password, email, name) values (?,?,?,?)""",
             (username, password, email, name))
 
         return User(id=generated_id, username=username, password='', email=email, name=name, is_admin=False)
@@ -45,7 +45,7 @@ def create_token(user: User) -> str:
 
 def is_authenticated(token: str) -> bool:
     return any(read_query(
-        'SELECT 1 FROM users where user_id = ? and username = ?',
+        """select 1 from users where user_id = ? and username = ?""",
         token.split(_SEPARATOR)))
 
 

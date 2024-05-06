@@ -65,7 +65,7 @@ def make_category_private(category_id: int, token: str = Header()):
 
     categories_service.make_category_private(category_id)
 
-    return f"Category with id:{category_id} is now private!"
+    return {"message": f"Category with id:{category_id} is now private!"}
 
 
 @categories_router.put("/{category_id}/non_private")
@@ -85,7 +85,7 @@ def make_category_non_private(category_id: int, token: str = Header()):
 
     categories_service.make_category_non_private(category_id)
 
-    return f"Category with id:{category_id} is now non-private!"
+    return {"message": f"Category with id:{category_id} is now non-private!"}
 
 
 @categories_router.put("/{id}/read_access/{user_id}")
@@ -122,4 +122,4 @@ def lock_category(category_id: int, token: str = Header()):
 
     categories_service.lock_category(category_id)
 
-    return f"Category with id:{category_id} locked successfully and can no longer accept new Topics!"
+    return {"message": f"Category with id:{category_id} locked successfully and can no longer accept new Topics!"}

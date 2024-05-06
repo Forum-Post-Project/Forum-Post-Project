@@ -1,5 +1,5 @@
-from fastapi import APIRouter, Header, HTTPException
-from pydantic import BaseModel
+from fastapi import APIRouter, Header
+from common.responses import InternalServerError
 from services import messages_service
 from data.models import Message
 from common.authentication import get_user_or_raise_401
@@ -15,7 +15,7 @@ def create_new_message(receiver_id: int, message: Message, token: str = Header()
     new_message = messages_service.create_message(
         message.text, sender_id, receiver_id)
     if not new_message:
-        raise HTTPException(status_code=500, detail="Failed to create message")
+        return InternalServerError(content="Failed to create message")
 
     return new_message
 
