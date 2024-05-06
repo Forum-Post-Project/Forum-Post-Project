@@ -24,6 +24,7 @@ def get_category_by_id(category_id: int,
                        sort: str = None,
                        page: int = None,
                        page_size: int = 10):
+
     category = categories_service.get_category_by_id(category_id, search=search, sort=sort, page=page,
                                                      page_size=page_size)
 
@@ -38,7 +39,7 @@ def create_category(category: Category, token: str = Header()):
     user = get_user_or_raise_401(token)
 
     if not user.is_admin:
-        return Forbidden("User is not authorized to create a category! Admin-only action!")
+        return Forbidden("Only admins can create categories!")
     if not category.name:
         return BadRequest(content="Category name is required in order to create a category!")
 
@@ -72,6 +73,18 @@ def show_privileges():
     pass
 
 
-@categories_router.put("/{id}/lock")
-def lock_category():
-    pass
+@categories_router.put("/{category_id}/lock")
+def lock_category(category_id: int, token: str = Header()):
+    user = get_user_or_raise_401(token)
+
+    if not user.is_admin:
+        return Forbidden(content="Only admins can lock categories!")
+
+    category = categories_service.get_category_by_id(category_id)
+
+    if not category:
+        return NotFound(content=f"Category with id:{category_id} does not exist!")
+
+    categories_service.lock_category(category_id)
+
+    return f"Category with id:{category_id} locked successfully!"

@@ -1,4 +1,4 @@
-from data.database import read_query, insert_query
+from data.database import read_query, insert_query, update_query
 from data.models import Category, Topic
 from common.responses import CreatedSuccessfully, BadRequest
 
@@ -62,3 +62,9 @@ def create_category(category: Category):
     category_id = insert_query(query, params)
     category.category_id = category_id
     return category #, CreatedSuccessfully(content=f"Category with id:{category_id} created successfully!")
+
+
+def lock_category(category_id: int):
+    query = """update categories set is_locked = 1 where category_id = ?"""
+    params = (category_id,)
+    update_query(query, params)
