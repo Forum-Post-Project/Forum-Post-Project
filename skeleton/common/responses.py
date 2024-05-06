@@ -3,6 +3,11 @@ import typing
 from fastapi import Response
 
 
+class Conflict(Response):
+    def __init__(self, content=""):
+        super().__init__(status_code=409,content=content)
+
+
 class BadRequest(Response):
     def __init__(self, content=""):
         super().__init__(status_code=400, content=content)

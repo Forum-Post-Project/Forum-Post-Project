@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Header
 from pydantic import BaseModel
 from services import categories_service
-from common.responses import NotFound, BadRequest, Forbidden
+from common.responses import NotFound, Forbidden, Conflict, BadRequest
 from data.models import Category, CreateCategory
 from common.authentication import get_user_or_raise_401
 
@@ -48,9 +48,44 @@ def create_category(creating_category: CreateCategory, token: str = Header()):
     return created_category
 
 
-@categories_router.put("/{id}/private")
-def change_private_status():
-    pass
+@categories_router.put("/{category_id}/private")
+def make_category_private(category_id: int, token: str = Header()):
+    user = get_user_or_raise_401(token)
+
+    if not user.is_admin:
+        return Forbidden(content="Only admins can change the private status of a category!")
+
+    category = categories_service.get_category_by_id(category_id)
+
+    if not category:
+        return NotFound(content=f"Category with id:{category_id} does not exist!")
+
+    if category.is_private:
+        return Conflict(content="Category is already private!")
+
+    categories_service.make_category_private(category_id)
+
+    return f"Category with id:{category_id} is now private!"
+
+
+@categories_router.put("/{category_id}/non_private")
+def make_category_non_private(category_id: int, token: str = Header()):
+    user = get_user_or_raise_401(token)
+
+    if not user.is_admin:
+        return Forbidden(content="Only admins can change the private status of a category!")
+
+    category = categories_service.get_category_by_id(category_id)
+
+    if not category:
+        return NotFound(content=f"Category with id:{category_id} does not exist!")
+
+    if not category.is_private:
+        return Conflict(content="Category is already non-private!")
+
+    categories_service.make_category_non_private(category_id)
+
+    return f"Category with id:{category_id} is now non-private!"
 
 
 @categories_router.put("/{id}/read_access/{user_id}")

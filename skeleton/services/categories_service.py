@@ -1,7 +1,5 @@
-from pydantic import BaseModel
 from data.database import read_query, insert_query, update_query
-from data.models import Category, Topic, CreateCategory, CategoryWithTopics
-from common.responses import BadRequest
+from data.models import Category, Topic, CategoryWithTopics
 
 
 def get_all_categories() -> list[Category] or None:
@@ -91,3 +89,21 @@ def get_category(category_id: int) -> Category or None:
         return category[0]
     else:
         return None
+
+
+def make_category_private(category_id: int):
+    category_query = "update categories set is_private = 1 where category_id = ?"
+    params = (category_id,)
+    update_query(category_query, params)
+
+    topic_query = "update topics set is_locked = 1 where category_id = ?"
+    update_query(topic_query, params)
+
+
+def make_category_non_private(category_id: int):
+    category_query = "update categories set is_private = 0 where category_id = ?"
+    params = (category_id,)
+    update_query(category_query, params)
+
+    topic_query = "update topics set is_locked = 0 where category_id = ?"
+    update_query(topic_query, params)
