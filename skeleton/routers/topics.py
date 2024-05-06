@@ -42,5 +42,13 @@ def create_new_topic(creating_topic: CreateTopic, token: str = Header()):
 
 
 @topics_router.put("/{id}/lock")
-def lock_topic():
-    pass
+def lock_topic(id: int, token: str = Header()):
+    user = get_user_or_raise_401(token)
+    if not user.is_admin:
+        return Forbidden(content="Only admins can lock topics")
+    topic = topics_services.get_topic(id)
+    if not topic:
+        return NotFound(content="Topic not found")
+
+    topics_services.lock_topic(id)
+    return {"message": "Topic locked successfully"}

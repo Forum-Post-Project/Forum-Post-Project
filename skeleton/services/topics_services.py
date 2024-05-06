@@ -1,4 +1,4 @@
-from data.database import insert_query, read_query
+from data.database import insert_query, read_query, update_query
 from datetime import date
 from data.models import Topic, Reply
 from pydantic import BaseModel
@@ -48,3 +48,17 @@ def get_topic_with_replies(topic_id: int):
     replies = [Reply.from_query_result(*reply_data) for reply_data in reply_result]
     topic = TopicWithReplies(title=topic_title, replies=replies)
     return topic
+
+
+def get_topic(topic_id: int):
+    query = "SELECT * FROM topics WHERE topic_id = ?"
+    result = read_query(query, (topic_id,))
+    if result:
+        return result[0]
+    else:
+        return None
+
+
+def lock_topic(topic_id: int):
+    query = "UPDATE topics SET is_locked = 1 WHERE topic_id = ?"
+    update_query(query, (topic_id,))
