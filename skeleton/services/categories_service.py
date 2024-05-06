@@ -1,12 +1,7 @@
 from pydantic import BaseModel
 from data.database import read_query, insert_query, update_query
-from data.models import Category, Topic
+from data.models import Category, Topic, CreateCategory, CategoryWithTopics
 from common.responses import BadRequest
-
-
-class CategoryWithTopics(BaseModel):
-    name: str
-    replies: list[Topic | None]
 
 
 def get_all_categories() -> list[Category] or None:
@@ -50,15 +45,21 @@ def get_category_by_id(category_id: int,
     category_data = read_query(category_query, params)
     topics_data = read_query(topic_query, params)
 
+    if not category_data:
+        return None
+
     category = Category.from_query_result(*category_data[0])
     topics_list = [Topic.from_query_result(*row) for row in topics_data]
 
-    if not topics_list:
-        category.topics_list = []
+    category_with_topics = CategoryWithTopics(
+        category_id=category.category_id,
+        name=category.name,
+        is_locked=category.is_locked,
+        is_private=category.is_private,
+        topics=topics_list
+    )
 
-    category.topics_list = topics_list
-
-    return category
+    return category_with_topics
 
 
 def create_category(name: str) -> Category or None:
@@ -71,8 +72,8 @@ def create_category(name: str) -> Category or None:
         return Category(category_id=category_id,
                         name=name,
                         is_locked=False,
-                        is_private=False,
-                        topics_list=[])
+                        is_private=False
+                        )
     else:
         return None
 

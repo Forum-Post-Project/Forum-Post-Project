@@ -34,23 +34,28 @@ class Category(BaseModel):
     name: str = constr(pattern="^\w{1,50}$")
     is_locked: bool
     is_private: bool
-    topics_list: list[Topic or None] = None
 
     @classmethod
-    def from_query_result(cls, category_id, name, is_locked, is_private, topics_list=None):
-        if topics_list is None:
-            topics_list = []
+    def from_query_result(cls, category_id, name, is_locked, is_private):
+
         return cls(
             category_id=category_id,
             name=name,
             is_locked=is_locked,
-            is_private=is_private,
-            topics_list=topics_list
+            is_private=is_private
         )
 
 
 class CreateCategory(BaseModel):
-    name: str
+    name: str = constr(pattern="^\w{1,50}$")
+
+
+class CategoryWithTopics(BaseModel):
+    category_id: int
+    name: str = constr(pattern="^\w{1,50}$")
+    is_locked: bool
+    is_private: bool
+    topics: list[Topic | None]
 
 
 class Reply(BaseModel):
