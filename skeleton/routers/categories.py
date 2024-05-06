@@ -1,6 +1,6 @@
 from fastapi import APIRouter, Header
 from pydantic import BaseModel
-from services import categories_service
+from services import categories_service, users_service
 from common.responses import NotFound, Forbidden, Conflict, BadRequest
 from data.models import Category, CreateCategory
 from common.authentication import get_user_or_raise_401
@@ -88,12 +88,26 @@ def make_category_non_private(category_id: int, token: str = Header()):
     return {"message": f"Category with id:{category_id} is now non-private!"}
 
 
-@categories_router.put("/{id}/read_access/{user_id}")
-def change_read_access():
-    pass
+@categories_router.put("/{category_id}/read_access/{user_id}")
+def give_user_category_read_access(category_id: int, user_id: int, token: str = Header()):
+    user = get_user_or_raise_401(token)
+    if not user.is_admin:
+        return Forbidden(content="Only admins can grant category read access!")
+
+    category = categories_service.get_category_by_id(category_id)
+    if not category:
+        return NotFound(content=f"Category with id:{category_id} not found.")
+
+    user_exists = users_service.get_by_id(user_id)
+    if not user_exists:
+        return NotFound(content=f"User with id:{user_id} not found.")
+
+    categories_service.give_user_category_read_access(category_id, user_id, access_level="Read")
+
+    return {"message": f"User with id:{user_id} granted read access to category with id:{category_id}."}
 
 
-@categories_router.put("/{id}/write_access/{user_id}")
+@categories_router.put("/{category_id}/write_access/{user_id}")
 def change_write_access():
     pass
 

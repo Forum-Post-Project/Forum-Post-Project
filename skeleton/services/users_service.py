@@ -19,6 +19,13 @@ def find_by_username(username: str) -> User | None:
     return next((User.from_query_result(*row) for row in data), None)
 
 
+def get_by_id(user_id: int) -> User | None:
+    data = read_query("""select * from users where user_id = ?""",
+        (user_id,))
+
+    return next((User.from_query_result(*row) for row in data), None)
+
+
 def try_login(username: str, password: str) -> User | None:
     user = find_by_username(username)
 

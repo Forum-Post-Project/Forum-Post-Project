@@ -35,7 +35,7 @@ class NoContent(Response):
 
 class InternalServerError(Response):
     def __init__(self, content=""):
-        super().__init__(status_code=500, content=content)
+        super().__init__(status_code=500, content=content )
 
 
 class CreatedSuccessfully(Response):

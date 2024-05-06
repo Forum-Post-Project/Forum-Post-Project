@@ -107,3 +107,10 @@ def make_category_non_private(category_id: int):
 
     topic_query = "update topics set is_locked = 0 where category_id = ?"
     update_query(topic_query, params)
+
+
+def give_user_category_read_access(category_id: int, user_id: int, access_level: str = "Read"):
+    query = """insert into users_category_access (user_id, category_id, access_level) values (?, ?, ?)"""
+    params = (user_id, category_id, access_level)
+
+    insert_query(query, params)
