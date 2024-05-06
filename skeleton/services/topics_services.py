@@ -1,7 +1,6 @@
 from data.database import insert_query, read_query, update_query
 from datetime import date
 from data.models import Topic, Reply
-from pydantic import BaseModel
 from services import categories_service
 from common.responses import Forbidden
 from data.models import TopicWithReplies

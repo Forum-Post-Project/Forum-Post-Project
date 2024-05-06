@@ -71,7 +71,8 @@ def create_category(name: str) -> Category or None:
         return Category(category_id=category_id,
                         name=name,
                         is_locked=False,
-                        is_private=False)
+                        is_private=False,
+                        topics_list=[])
     else:
         return None
 
