@@ -96,7 +96,7 @@ class User(BaseModel):
     is_admin: bool = False
 
     @classmethod
-    def from_query_result(cls, user_id, username, password, email, name, is_admin):
+    def from_query_result(cls, user_id, username, password, email, name, is_admin=False):
         return cls(
             id=user_id,
             username=username,
@@ -112,4 +112,4 @@ class LoginInformation(BaseModel):
     password: str
     email: str = None or None
     name: str = None or None
-    is_admin: bool
+    is_admin: bool = False

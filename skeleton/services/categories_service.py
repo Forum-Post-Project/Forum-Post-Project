@@ -47,6 +47,7 @@ def get_category_by_id(category_id: int,
     category = Category.from_query_result(*category_data[0])
     topics_list = [Topic.from_query_result(*row) for row in topics_data]
 
+
     if not topics_list:
         category.topics_list = []
 
@@ -61,10 +62,20 @@ def create_category(category: Category):
 
     category_id = insert_query(query, params)
     category.category_id = category_id
-    return category #, CreatedSuccessfully(content=f"Category with id:{category_id} created successfully!")
+    return category
 
 
 def lock_category(category_id: int):
     query = """update categories set is_locked = 1 where category_id = ?"""
     params = (category_id,)
     update_query(query, params)
+
+
+def get_category(category_id: int) -> Category or None:
+    query = "SELECT * FROM categories WHERE category_id = ?"
+    category = read_query(query, (category_id,))
+
+    if category:
+        return category[0]
+    else:
+        return None

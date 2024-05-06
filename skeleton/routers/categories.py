@@ -87,4 +87,4 @@ def lock_category(category_id: int, token: str = Header()):
 
     categories_service.lock_category(category_id)
 
-    return f"Category with id:{category_id} locked successfully!"
+    return f"Category with id:{category_id} locked successfully and can no longer accept new Topics!"

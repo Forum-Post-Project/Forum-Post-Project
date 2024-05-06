@@ -2,6 +2,8 @@ from data.database import insert_query, read_query, update_query
 from datetime import date
 from data.models import Topic, Reply
 from pydantic import BaseModel
+from services import categories_service
+from common.responses import Forbidden
 
 
 class TopicWithReplies(BaseModel):
@@ -11,6 +13,9 @@ class TopicWithReplies(BaseModel):
 
 def create_topic(title: str, category_id: int, user_id) -> Topic or None:
     query = "insert into topics (title, category_id, user_id, creation_date) values (?,?,?,?)"
+    category = categories_service.get_category(category_id)
+    if category.is_locked:
+        return Forbidden(content="Category is locked!")
     params = (title, category_id, user_id, date.today())
     topic_id = insert_query(query, params)
     if topic_id:

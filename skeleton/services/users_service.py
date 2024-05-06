@@ -26,14 +26,14 @@ def try_login(username: str, password: str) -> User | None:
     return user if user and user.password == password else None
 
 
-def create(username: str, password: str, email: str, name: str, is_admin: int) -> User | None:
+def create(username: str, password: str, email: str, name: str) -> User | None:
     # password = _hash_password(password)
     try:
         generated_id = insert_query(
-            'INSERT INTO users(username, password, email, name, is_admin) VALUES (?,?,?,?,?)',
-            (username, password, email, name, is_admin))
+            'INSERT INTO users(username, password, email, name) VALUES (?,?,?,?)',
+            (username, password, email, name))
 
-        return User(id=generated_id, username=username, password='', email=email, name=name, is_admin=is_admin)
+        return User(id=generated_id, username=username, password='', email=email, name=name, is_admin=False)
 
     except IntegrityError:
         return None
