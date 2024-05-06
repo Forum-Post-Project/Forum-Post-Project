@@ -24,6 +24,11 @@ class Topic(BaseModel):
         )
 
 
+class CreateTopic(BaseModel):
+    title: str
+    category_id: int
+
+
 class Category(BaseModel):
     category_id: int
     name: str = constr(pattern="^\w{1,50}$")
@@ -60,6 +65,11 @@ class Reply(BaseModel):
             user_id=user_id,
             creation_date=creation_date
         )
+
+
+class TopicWithReplies(BaseModel):
+    title: str
+    replies: list[Reply | None]
 
 
 class Vote(BaseModel):

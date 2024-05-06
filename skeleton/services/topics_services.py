@@ -4,11 +4,7 @@ from data.models import Topic, Reply
 from pydantic import BaseModel
 from services import categories_service
 from common.responses import Forbidden
-
-
-class TopicWithReplies(BaseModel):
-    title: str
-    replies: list[Reply | None]
+from data.models import TopicWithReplies
 
 
 def create_topic(title: str, category_id: int, user_id) -> Topic or None:

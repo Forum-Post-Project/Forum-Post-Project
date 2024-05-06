@@ -1,6 +1,12 @@
+from pydantic import BaseModel
 from data.database import read_query, insert_query, update_query
 from data.models import Category, Topic
-from common.responses import CreatedSuccessfully, BadRequest
+from common.responses import BadRequest
+
+
+class CategoryWithTopics(BaseModel):
+    name: str
+    replies: list[Topic | None]
 
 
 def get_all_categories() -> list[Category] or None:
@@ -46,7 +52,6 @@ def get_category_by_id(category_id: int,
 
     category = Category.from_query_result(*category_data[0])
     topics_list = [Topic.from_query_result(*row) for row in topics_data]
-
 
     if not topics_list:
         category.topics_list = []

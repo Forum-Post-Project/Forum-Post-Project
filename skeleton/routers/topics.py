@@ -1,18 +1,13 @@
 from fastapi import APIRouter, Header
-from pydantic import BaseModel
 from data.models import Topic, Reply
 from common.authentication import get_user_or_raise_401
 from common.responses import NotFound, BadRequest, Forbidden
 from services import topics_services
 from typing import List, Optional
+from data.models import CreateTopic
 
 
 topics_router = APIRouter(prefix="/topics")
-
-
-class CreateTopic(BaseModel):
-    title: str
-    category_id: int
 
 
 @topics_router.get("/")
