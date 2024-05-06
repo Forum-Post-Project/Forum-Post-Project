@@ -61,13 +61,19 @@ def get_category_by_id(category_id: int,
     return category
 
 
-def create_category(category: Category):
-    query = """insert into categories (name) values (?)"""
-    params = (category.name,)
+def create_category(name: str) -> Category or None:
+    query = """insert into categories (name) values(?)"""
+    params = (name,)
 
     category_id = insert_query(query, params)
-    category.category_id = category_id
-    return category
+
+    if category_id:
+        return Category(category_id=category_id,
+                        name=name,
+                        is_locked=False,
+                        is_private=False)
+    else:
+        return None
 
 
 def lock_category(category_id: int):
