@@ -19,10 +19,9 @@ def get_category_by_id(category_id: int,
                        search: str = None,
                        sort: str = None,
                        page: int = None,
-                       page_size: int = 10) -> Category or None:
-    category_query = """select category_id, name, is_locked, is_private from categories where category_id = ?"""
-    topic_query = """select topic_id, title, category_id, user_id, creation_date, best_reply, is_locked from topics 
-    where category_id = ?"""
+                       page_size: int = 10) -> CategoryWithTopics or None:
+    category_query = """select * from categories where category_id = ?"""
+    topic_query = """select * from topics where category_id = ?"""
     params = (category_id,)
 
     if search:
@@ -59,7 +58,6 @@ def get_category_by_id(category_id: int,
         topics=topics_list
     )
 
-    print(category_with_topics)
     return category_with_topics
 
 
@@ -86,7 +84,7 @@ def lock_category(category_id: int):
 
 
 def get_category(category_id: int) -> Category or None:
-    query = "SELECT * FROM categories WHERE category_id = ?"
+    query = """select * from categories where category_id = ?"""
     category = read_query(query, (category_id,))
 
     if category:
