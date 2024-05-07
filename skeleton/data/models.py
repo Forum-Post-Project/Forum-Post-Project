@@ -126,6 +126,19 @@ class User(BaseModel):
         )
 
 
+class UserCategoryAccess(BaseModel):
+    user_id: int
+    username: str
+    access_level: str
+
+    @classmethod
+    def from_query_result(cls, user_id, username, access_level):
+        return cls(user_id=user_id,
+                   username=username,
+                   access_level=access_level
+                   )
+
+
 class LoginInformation(BaseModel):
     username: str
     password: str
