@@ -114,3 +114,21 @@ def give_user_category_read_access(category_id: int, user_id: int, access_level:
     params = (user_id, category_id, access_level)
 
     insert_query(query, params)
+
+
+def give_user_category_write_access(category_id: int, user_id: int, access_level: str = "Write"):
+    query = """insert into users_category_access (user_id, category_id, access_level) values (?, ?, ?)"""
+    params = (user_id, category_id, access_level)
+
+    insert_query(query, params)
+
+
+def revoke_user_category_access(user_id: int, category_id: int):
+    query = "DELETE FROM users_category_access WHERE user_id = ? AND category_id = ?"
+    update_query(query, (user_id, category_id))
+
+
+def access_exists(user_id, category_id):
+    existing_access_query = "SELECT access_level FROM users_category_access WHERE user_id = ? AND category_id = ?"
+    existing_access = read_query(existing_access_query, (user_id, category_id))
+    return True if existing_access else False

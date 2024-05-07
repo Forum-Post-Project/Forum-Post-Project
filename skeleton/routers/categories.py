@@ -102,19 +102,45 @@ def give_user_category_read_access(category_id: int, user_id: int, token: str = 
     if not user_exists:
         return NotFound(content=f"User with id:{user_id} not found.")
 
+    access_level = categories_service.access_exists(user_id, category_id)
+    if access_level:
+        categories_service.revoke_user_category_access(user_id, category_id)
+
     categories_service.give_user_category_read_access(category_id, user_id, access_level="Read")
 
     return {"message": f"User with id:{user_id} granted read access to category with id:{category_id}."}
 
 
 @categories_router.put("/{category_id}/write_access/{user_id}")
-def change_write_access():
-    pass
+def give_user_category_write_access(category_id: int, user_id: int, token: str = Header()):
+    user = get_user_or_raise_401(token)
+    if not user.is_admin:
+        return Forbidden(content="Only admins can grant category read access!")
+
+    category = categories_service.get_category_by_id(category_id)
+    if not category:
+        return NotFound(content=f"Category with id:{category_id} not found.")
+
+    user_exists = users_service.get_by_id(user_id)
+    if not user_exists:
+        return NotFound(content=f"User with id:{user_id} not found.")
+
+    access_level = categories_service.access_exists(user_id, category_id)
+    if access_level:
+        categories_service.revoke_user_category_access(user_id, category_id)
+
+    categories_service.give_user_category_read_access(category_id, user_id, access_level="Write")
+
+    return {"message": f"User with id:{user_id} granted write access to category with id:{category_id}."}
 
 
-@categories_router.put("/{id}/remove_access/{user_id}")
-def remove_access():
-    pass
+@categories_router.put("/{category_id}/remove_access/{user_id}")
+def remove_access(category_id: int, user_id: int, token: str = Header()):
+    user = get_user_or_raise_401(token)
+    if not user.is_admin:
+        return Forbidden(content="Only admins can revoke user access.")
+
+    categories_service.revoke_user_category_access(user_id, category_id)
 
 
 @categories_router.get("/{id}/privileges")
