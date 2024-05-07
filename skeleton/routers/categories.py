@@ -161,9 +161,16 @@ def get_privileged_users(category_id: int, token: str = Header()):
     if not user.is_admin:
         return Forbidden(content="Only admins can view privileged users of a category!")
 
-    privileged_users = categories_service.get_privileged_users(category_id)
+    category = categories_service.get_category_by_id(category_id)
 
-    return privileged_users
+    if not category:
+        return NotFound(content=f"Category with id:{category_id} not found!")
+
+    if category.is_private:
+        privileged_users = categories_service.get_privileged_users(category_id)
+        return privileged_users
+    else:
+        return {"message": f"Category with id:{category_id} is not private and does not have privileged users!"}
 
 
 @categories_router.put("/{category_id}/lock")
