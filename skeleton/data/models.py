@@ -53,6 +53,8 @@ class CreateCategory(BaseModel):
 class CategoryWithTopics(BaseModel):
     category_id: int
     name: str = constr(pattern="^\w{1,50}$")
+    is_locked: bool
+    is_private: bool
     topics: list[Topic | None]
 
 

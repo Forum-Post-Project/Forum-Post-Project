@@ -1,7 +1,6 @@
 from fastapi import APIRouter, Header
-from pydantic import BaseModel
 from services import categories_service, users_service
-from common.responses import NotFound, Forbidden, Conflict, BadRequest
+from common.responses import NotFound, Forbidden, Conflict, BadRequest, Unauthorized
 from data.models import Category, CreateCategory
 from common.authentication import get_user_or_raise_401
 
@@ -23,13 +22,25 @@ def get_category_by_id(category_id: int,
                        search: str = None,
                        sort: str = None,
                        page: int = None,
-                       page_size: int = 10):
+                       page_size: int = 10, token: str = Header()):
+
+    user = get_user_or_raise_401(token)
+
+    if not user:
+        return Unauthorized(content="Login required for this action!")
 
     category = categories_service.get_category_by_id(category_id, search=search, sort=sort, page=page,
                                                      page_size=page_size)
-
     if not category:
         return NotFound(content=f"Category with id:{category_id} does not exist!")
+
+    if user.is_admin:
+        return category
+
+    if category.is_private:
+
+        if not categories_service.access_exists(user.id, category_id):
+            return Forbidden(content="User does not have access to this category!")
 
     return category
 
@@ -163,3 +174,5 @@ def lock_category(category_id: int, token: str = Header()):
     categories_service.lock_category(category_id)
 
     return {"message": f"Category with id:{category_id} locked successfully and can no longer accept new Topics!"}
+
+

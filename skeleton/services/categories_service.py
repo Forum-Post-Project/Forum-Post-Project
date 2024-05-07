@@ -129,6 +129,6 @@ def revoke_user_category_access(user_id: int, category_id: int):
 
 
 def access_exists(user_id, category_id):
-    existing_access_query = "SELECT access_level FROM users_category_access WHERE user_id = ? AND category_id = ?"
+    existing_access_query = """select access_level from users_category_access where user_id = ? and category_id = ?"""
     existing_access = read_query(existing_access_query, (user_id, category_id))
     return True if existing_access else False
