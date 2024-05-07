@@ -26,9 +26,6 @@ def get_category_by_id(category_id: int,
 
     user = get_user_or_raise_401(token)
 
-    if not user:
-        return Unauthorized(content="Login required for this action!")
-
     category = categories_service.get_category_by_id(category_id, search=search, sort=sort, page=page,
                                                      page_size=page_size)
     if not category:
@@ -38,7 +35,6 @@ def get_category_by_id(category_id: int,
         return category
 
     if category.is_private:
-
         if not categories_service.access_exists(user.id, category_id):
             return Forbidden(content="User does not have access to this category!")
 
@@ -168,6 +164,8 @@ def get_privileged_users(category_id: int, token: str = Header()):
 
     if category.is_private:
         privileged_users = categories_service.get_privileged_users(category_id)
+        if not privileged_users:
+            return {"message": f"Category with id:{category_id} does not have privileged users yet!"}
         return privileged_users
     else:
         return {"message": f"Category with id:{category_id} is not private and does not have privileged users!"}
