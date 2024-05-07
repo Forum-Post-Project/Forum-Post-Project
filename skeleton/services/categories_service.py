@@ -1,5 +1,5 @@
 from data.database import read_query, insert_query, update_query
-from data.models import Category, Topic, CategoryWithTopics
+from data.models import Category, Topic, CategoryWithTopics, UserCategoryAccess
 
 
 def get_all_categories() -> list[Category] or None:
@@ -132,3 +132,19 @@ def access_exists(user_id, category_id):
     existing_access_query = """select access_level from users_category_access where user_id = ? and category_id = ?"""
     existing_access = read_query(existing_access_query, (user_id, category_id))
     return True if existing_access else False
+
+
+def get_privileged_users(category_id: int):
+
+    query = """
+        select uca.user_id, u.username, uca.access_level
+        from users_category_access as uca
+        join users as u on uca.user_id = u.user_id
+        where uca.category_id = ?
+    """
+    params = (category_id,)
+    result = read_query(query, params)
+
+    privileged_users = [UserCategoryAccess.from_query_result(*row) for row in result]
+
+    return privileged_users

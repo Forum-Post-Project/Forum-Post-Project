@@ -154,9 +154,16 @@ def remove_access(category_id: int, user_id: int, token: str = Header()):
     categories_service.revoke_user_category_access(user_id, category_id)
 
 
-@categories_router.get("/{id}/privileges")
-def show_privileges():
-    pass
+@categories_router.get("/{category_id}/privileged_users")
+def get_privileged_users(category_id: int, token: str = Header()):
+    user = get_user_or_raise_401(token)
+
+    if not user.is_admin:
+        return Forbidden(content="Only admins can view privileged users of a category!")
+
+    privileged_users = categories_service.get_privileged_users(category_id)
+
+    return privileged_users
 
 
 @categories_router.put("/{category_id}/lock")
