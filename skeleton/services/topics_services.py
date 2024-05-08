@@ -23,15 +23,17 @@ def create_topic(title: str, category_id: int, user_id: int) -> Topic or None:
         return None
 
 
-def get_all_topics(search: str = None, sort_by: str = None, limit: int = 10, offset: int = 0):
+def get_all_topics(search: str = None, sort_by: str = None, limit: int = 10, offset: int = 0):  # todo make code not prone to SQL injections
     base_query = """select * from topics"""
+    params = ()
     if search:
-        base_query += f""" where title like '%{search}%'"""
+        base_query += f""" where title like ?"""
+        params += (f"%{search}%",)
     if sort_by:
         base_query += f""" order by {sort_by}"""
 
     base_query += f""" limit {limit} offset {offset}"""
-    query_result = read_query(base_query)
+    query_result = read_query(base_query, params)
     topics = [Topic.from_query_result(*row) for row in query_result]
     return topics
 
