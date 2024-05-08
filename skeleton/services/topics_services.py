@@ -1,5 +1,5 @@
 from data.database import insert_query, read_query, update_query
-from datetime import date
+from datetime import datetime
 from data.models import Topic, Reply
 from services import categories_service
 from common.responses import Forbidden
@@ -11,10 +11,10 @@ def create_topic(title: str, category_id: int, user_id: int) -> Topic or None:
     category = categories_service.get_category_by_id(category_id)
     if category.is_locked:
         return Forbidden(content="Category is locked!")
-    params = (title, category_id, user_id, date.today())
+    params = (title, category_id, user_id, datetime.now().strftime("%Y-%m-%d %H:%M"))
     topic_id = insert_query(query, params)
     if topic_id:
-        return Topic(topic_id=topic_id,
+        return Topic(id=topic_id,
                      title=title,
                      category_id=category_id,
                      user_id=user_id,
