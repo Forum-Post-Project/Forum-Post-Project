@@ -6,9 +6,9 @@ from common.responses import Forbidden
 from data.models import TopicWithReplies
 
 
-def create_topic(title: str, category_id: int, user_id) -> Topic or None:
+def create_topic(title: str, category_id: int, user_id: int) -> Topic or None:
     query = "insert into topics (title, category_id, user_id, creation_date) values (?,?,?,?)"
-    category = categories_service.get_category(category_id)
+    category = categories_service.get_category_by_id(category_id)
     if category.is_locked:
         return Forbidden(content="Category is locked!")
     params = (title, category_id, user_id, date.today())

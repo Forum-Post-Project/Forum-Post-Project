@@ -32,7 +32,7 @@ def create_new_topic(creating_topic: CreateTopic, token: str = Header()):
     if not creating_topic.category_id:
         return BadRequest(content="Topic can not exist without a category!")
     user = get_user_or_raise_401(token)
-    new_topic = topics_services.create_topic(creating_topic.title, creating_topic.category_id, user.user_id)
+    new_topic = topics_services.create_topic(creating_topic.title, creating_topic.category_id, user.id)
     return new_topic
 
 
