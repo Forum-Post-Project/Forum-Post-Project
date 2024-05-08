@@ -6,7 +6,7 @@ from datetime import datetime
 
 def create_message(text: str, sender_id: int, receiver_id: int) -> Message or None:
     query = """insert into messages (text, sender_id, receiver_id, creation_date) values (?, ?, ?, ?)"""
-    params = (text, sender_id, receiver_id, datetime.now())
+    params = (text, sender_id, receiver_id, datetime.now().strftime("%Y-%m-%d %H:%M"))
     message_id = insert_query(query, params)
     if message_id:
         return Message(id=message_id, text=text, sender_id=sender_id, receiver_id=receiver_id, creation_date=params[-1])

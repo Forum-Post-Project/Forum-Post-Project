@@ -93,7 +93,7 @@ class Message(BaseModel):
     text: str
     sender_id: int
     receiver_id: int
-    creation_date: date
+    creation_date: datetime
 
     @classmethod
     def from_query_result(cls, message_id, text, sender_id, receiver_id, creation_date):
