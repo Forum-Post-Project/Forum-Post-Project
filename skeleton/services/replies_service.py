@@ -4,7 +4,7 @@ from data.models import Reply
 
 def vote_on_reply(reply_id: int, user_id: int, vote_type: bool) -> bool:
 
-    query = "SELECT 1 FROM reply_votes WHERE reply_id = ? AND user_id = ?"
+    query = """select 1 from reply_votes WHERE reply_id = ? AND user_id = ?"""
     params = (reply_id, user_id)
     existing_vote = read_query(query, params)
     
