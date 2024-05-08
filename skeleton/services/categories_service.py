@@ -37,9 +37,10 @@ def get_category_by_id(category_id: int,
             page = 1
         offset = (page - 1) * page_size
         topic_query += " limit ? offset ?"
-        params += (page_size, offset)
+        params += (page_size,)
+        params += (offset,)
 
-    category_data = read_query(category_query, params)
+    category_data = read_query(category_query, (category_id,))
     topics_data = read_query(topic_query, params)
 
     if not category_data:
