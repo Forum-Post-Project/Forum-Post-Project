@@ -15,7 +15,7 @@ def get_all_categories() -> list[Category] or None:
 
 def get_category_by_id(category_id: int,
                        search: str = None,
-                       sort: str = None,
+                       sort_by: str = None,
                        page: int = None,
                        page_size: int = 10) -> CategoryWithTopics or None:
     category_query = """select * from categories where category_id = ?"""
@@ -26,9 +26,9 @@ def get_category_by_id(category_id: int,
         topic_query += " and title like ?"
         params += (f'%{search}%',)
 
-    if sort:
-        if sort.lower() in ["asc", "desc"]:
-            topic_query += f" order by creation_date {sort.lower()}"
+    if sort_by:
+        if sort_by.lower() in ["asc", "desc"]:
+            topic_query += f" order by creation_date {sort_by.lower()}"
         else:
             raise ValueError("Sorting topics only using 'asc' or 'desc'!")
 

@@ -20,13 +20,13 @@ def get_all_categories():
 @categories_router.get("/{category_id}")
 def get_category_by_id(category_id: int,
                        search: str = None,
-                       sort: str = None,
+                       sort_by: str = None,
                        page: int = None,
                        page_size: int = 10, token: str = Header()):
 
     user = get_user_or_raise_401(token)
 
-    category = categories_service.get_category_by_id(category_id, search=search, sort=sort, page=page,
+    category = categories_service.get_category_by_id(category_id, search=search, sort_by=sort_by, page=page,
                                                      page_size=page_size)
     if not category:
         return NotFound(content=f"Category with id:{category_id} does not exist!")
