@@ -1,5 +1,6 @@
 from data.database import read_query, insert_query, update_query
 from data.models import Category, Topic, CategoryWithTopics, UserCategoryAccess
+from common.responses import BadRequest
 
 
 def get_all_categories() -> list[Category] or None:
@@ -23,14 +24,17 @@ def get_category_by_id(category_id: int,
     params = (category_id,)
 
     if search:
-        topic_query += " and title like ?"
+        topic_query += """ and title like ?"""
         params += (f'%{search}%',)
 
     if sort_by:
-        if sort_by.lower() in ["asc", "desc"]:
-            topic_query += f" order by creation_date {sort_by.lower()}"
+        if sort_by.lower() in ["oldest", "newest"]:
+            if sort_by.lower() == "oldest":
+                topic_query += """ order by creation_date asc"""
+            else:
+                topic_query += """ order by creation_date desc"""
         else:
-            raise ValueError("Sorting topics only using 'asc' or 'desc'!")
+            return BadRequest(content="Sorting topics only using 'oldest' or 'newest'!")
 
     if page and page_size:
         if page < 1:

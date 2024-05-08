@@ -2,7 +2,7 @@ from data.database import insert_query, read_query, update_query
 from datetime import datetime
 from data.models import Topic, Reply
 from services import categories_service
-from common.responses import Forbidden
+from common.responses import Forbidden, BadRequest
 from data.models import TopicWithReplies
 
 
@@ -29,8 +29,15 @@ def get_all_topics(search: str = None, sort_by: str = None, limit: int = 10, off
     if search:
         base_query += f""" where title like ?"""
         params += (f"%{search}%",)
+
     if sort_by:
-        base_query += f""" order by {sort_by}"""
+        if sort_by.lower() in ["oldest", "newest"]:
+            if sort_by.lower() == "oldest":
+                base_query += """ order by creation_date asc"""
+            else:
+                base_query += """ order by creation_date desc"""
+        else:
+            return BadRequest(content="Sorting topics only using 'oldest' or 'newest'!")
 
     base_query += f""" limit {limit} offset {offset}"""
     query_result = read_query(base_query, params)
