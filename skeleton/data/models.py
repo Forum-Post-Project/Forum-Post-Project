@@ -106,6 +106,10 @@ class Message(BaseModel):
         )
 
 
+class CreateMessage(BaseModel):
+    text: str
+
+
 class User(BaseModel):
     id: int
     username: str = constr(pattern="^\w{5,20}$")

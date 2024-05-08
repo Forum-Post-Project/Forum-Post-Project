@@ -1,19 +1,23 @@
 from fastapi import APIRouter, Header
 from common.responses import InternalServerError
 from services import messages_service
-from data.models import Message
+from data.models import CreateMessage
 from common.authentication import get_user_or_raise_401
+from common.responses import Conflict
 
 messages_router = APIRouter(prefix="/messages/users")
 
 
 @messages_router.post("/{receiver_id}")
-def create_new_message(receiver_id: int, message: Message, token: str = Header()):
+def create_new_message(receiver_id: int, creating_message: CreateMessage, token: str = Header()):
 
-    sender_id = get_user_or_raise_401(token).id
+    sender = get_user_or_raise_401(token)
 
-    new_message = messages_service.create_message(
-        message.text, sender_id, receiver_id)
+    if sender.id == receiver_id:
+        return Conflict(content="Sender and receiver cannot be the same user")
+
+    new_message = messages_service.create_message(creating_message.text, sender.id, receiver_id)
+
     if not new_message:
         return InternalServerError(content="Failed to create message")
 
@@ -35,4 +39,5 @@ def get_all_conversations(token: str = Header()):
     sender_id = get_user_or_raise_401(token).id
 
     conversations = messages_service.get_all_conversations(sender_id)
+
     return conversations
