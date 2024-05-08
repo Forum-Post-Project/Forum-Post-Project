@@ -40,11 +40,13 @@ def get_conversation(receiver_id: int, token: str = Header()):
     return conversation
 
 
-@messages_router.get("/receivers")
+@messages_router.get("/")
 def get_all_conversations(token: str = Header()):
-
     sender = get_user_or_raise_401(token)
 
     conversations = messages_service.get_all_conversations(sender.id)
+
+    if not conversations:
+        return NotFound(content=f"User with id:{sender.id} has no conversations with other users!")
 
     return conversations
