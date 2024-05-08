@@ -6,12 +6,12 @@ replies_router = APIRouter(prefix="/replies")
 
 
 @replies_router.post("/{topic_id}", response_model=Reply)
-def create_new_reply(topic_id: int, token: str = Header(), reply: Reply):
+def create_new_reply(topic_id: int, reply: Reply, token: str = Header()):
     if not token:
         raise HTTPException(
             status_code=401, detail="Authentication token is required")
 
-    new_reply = replies_service.create_new_reply(topic_id, token, reply)
+    new_reply = replies_service.create_new_reply(topic_id, reply, token)
     return new_reply
 
 
