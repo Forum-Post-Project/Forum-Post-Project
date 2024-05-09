@@ -84,6 +84,15 @@ class ChooseBestReply(BaseModel):
     reply_id: int
 
 
+class ReplyWithVotes(BaseModel):
+    id: int
+    text: str
+    topic_id: int
+    user_id: int
+    creation_date: datetime
+    vote_type: int
+
+
 class TopicWithReplies(BaseModel):
     category_id: int
     title: str

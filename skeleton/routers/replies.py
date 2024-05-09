@@ -69,7 +69,8 @@ def upvote_reply(reply_id: int, token: str = Header()):
         return Conflict(content="User has already upvoted this reply!")
 
     replies_service.upvote_reply(reply_id, user.id)
-    return {"message": f"Reply with id:{reply_id} upvoted successfully!"}
+    return ({"message": f"Reply with id:{reply_id} upvoted successfully!"},
+            replies_service.get_reply_with_votes(reply_id))
 
 
 @replies_router.post("/{reply_id}/downvote")
@@ -106,4 +107,5 @@ def downvote_reply(reply_id: int, token: str = Header()):
         return Conflict(content="User has already downvoted this reply!")
 
     replies_service.downvote_reply(reply_id, user.id)
-    return {"message": f"Reply with id:{reply_id} downvoted successfully!"}
+    return ({"message": f"Reply with id:{reply_id} downvoted successfully!"},
+            replies_service.get_reply_with_votes(reply_id))
