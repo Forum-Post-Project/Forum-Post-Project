@@ -12,8 +12,12 @@ topics_router = APIRouter(prefix="/topics")
 
 @topics_router.get("/")
 def get_all_topics(search: Optional[str] = None, sort_by: Optional[str] = None,
-                   limit: int = 10, offset: int = 0):
-    topics = topics_services.get_all_topics(search, sort_by, limit, offset)
+                   limit: int = 10, offset: int = 0, token: str = Header()):
+
+    user = get_user_or_raise_401(token)
+
+    topics = topics_services.get_all_topics(search, sort_by, limit, offset, user.id)
+
     return topics
 
 
@@ -65,7 +69,8 @@ def create_new_topic(creating_topic: CreateTopic, token: str = Header()):
 
     if category.is_private:
         if not categories_service.access_exists(user.id, creating_topic.category_id):
-            return Forbidden(f"Category with id:{creating_topic.category_id} is private! User does not have access to it!")
+            return Forbidden(f"Category with id:{creating_topic.category_id} is private! User does not have access to "
+                             f"it!")
 
     new_topic = topics_services.create_topic(creating_topic.title, creating_topic.category_id, user.id)
 
