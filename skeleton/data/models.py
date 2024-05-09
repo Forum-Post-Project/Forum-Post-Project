@@ -63,7 +63,7 @@ class Reply(BaseModel):
     text: str
     topic_id: int
     user_id: int
-    creation_date: date
+    creation_date: datetime
 
     @classmethod
     def from_query_result(cls, reply_id, text, topic_id, user_id, creation_date):
@@ -76,9 +76,15 @@ class Reply(BaseModel):
         )
 
 
+class CreateReply(BaseModel):
+    text: str
+    topic_id: int
+
+
 class TopicWithReplies(BaseModel):
     category_id: int
     title: str
+    is_locked: bool
     replies: list[Reply | None]
 
 

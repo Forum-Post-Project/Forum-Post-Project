@@ -57,19 +57,19 @@ def get_all_topics(search: str = None, sort_by: str = None, limit: int = 10, off
 
 
 def get_topic_with_replies(topic_id: int) -> TopicWithReplies or None:
-    topic_query = """select title, category_id from topics where topic_id = ?"""
+    topic_query = """select title, category_id, is_locked from topics where topic_id = ?"""
     topic_result = read_query(topic_query, (topic_id,))
     if not topic_result:
         return None
 
-    topic_title, category_id = topic_result[0]
+    topic_title, category_id, is_locked = topic_result[0]
 
     reply_query = """select * from replies where topic_id = ?"""
     reply_result = read_query(reply_query, (topic_id,))
 
     replies = [Reply.from_query_result(*reply_data) for reply_data in reply_result]
 
-    return TopicWithReplies(category_id=category_id, title=topic_title, replies=replies)
+    return TopicWithReplies(category_id=category_id, title=topic_title, is_locked=is_locked, replies=replies)
 
 
 def get_topic(topic_id: int):

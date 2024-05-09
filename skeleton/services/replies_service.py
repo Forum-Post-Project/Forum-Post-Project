@@ -1,5 +1,21 @@
-from data.database import read_query, update_query
+from datetime import datetime
+from data.database import read_query, update_query, insert_query
 from data.models import Reply
+
+
+def create_reply(text: str, topic_id: int, user_id: int) -> Reply | None:
+    query = "insert into replies (text, topic_id, user_id, creation_date) values (?, ?, ?, ?)"
+    params = (text, topic_id, user_id, datetime.now().strftime("%Y-%m-%d %H:%M"))
+    reply_id = insert_query(query, params)
+
+    if reply_id:
+        return Reply(id=reply_id,
+                     text=text,
+                     topic_id=topic_id,
+                     user_id=user_id,
+                     creation_date=params[-1])
+    else:
+        return None
 
 
 def vote_on_reply(reply_id: int, user_id: int, vote_type: bool) -> bool:
