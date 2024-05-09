@@ -2,7 +2,7 @@ from fastapi import APIRouter, Header
 from data.models import Topic, Reply
 from common.authentication import get_user_or_raise_401
 from common.responses import NotFound, BadRequest, Forbidden
-from services import topics_services
+from services import topics_services, categories_service
 from typing import List, Optional
 from data.models import CreateTopic
 
@@ -18,10 +18,29 @@ def get_all_topics(search: Optional[str] = None, sort_by: Optional[str] = None,
 
 
 @topics_router.get("/{topic_id}")
-def get_topic_by_id(topic_id: int):
+def get_topic_by_id(topic_id: int, token: str = Header()):
     topic = topics_services.get_topic_with_replies(topic_id)
+
     if not topic:
         return NotFound(content=f"Topic with id:{topic_id} does not exist!")
+
+    category_id = topic.category_id
+    category = categories_service.get_category_by_id(category_id)
+
+    if not category:
+        return NotFound(content=f"Category for topic with id:{topic_id} does not exist!")
+
+    user = get_user_or_raise_401(token)
+
+    if user.is_admin:
+        return topic
+
+    if category.is_private:
+        if not categories_service.access_exists(user.id, category_id):
+            return Forbidden(content=f"Cannot view topics! User does not have access to category with id:{category_id}")
+
+        return topic
+
     return topic
 
 

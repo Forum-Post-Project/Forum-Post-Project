@@ -77,6 +77,7 @@ class Reply(BaseModel):
 
 
 class TopicWithReplies(BaseModel):
+    category_id: int
     title: str
     replies: list[Reply | None]
 
