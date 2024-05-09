@@ -37,7 +37,9 @@ def get_topic_by_id(topic_id: int, token: str = Header()):
 
     if category.is_private:
         if not categories_service.access_exists(user.id, category_id):
-            return Forbidden(content=f"Cannot view topics! User does not have access to category with id:{category_id}")
+            return Forbidden(content=f"Cannot view topic with id:{topic_id}! "
+                                     f"User does not have access to category with id:{category_id}"
+                                     f" to which the topic belongs to!")
 
         return topic
 
