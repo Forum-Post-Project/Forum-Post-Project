@@ -4,7 +4,7 @@ from common.authentication import get_user_or_raise_401
 from common.responses import NotFound, BadRequest, Forbidden
 from services import topics_services, categories_service
 from typing import List, Optional
-from data.models import CreateTopic
+from data.models import CreateTopic, ChooseBestReply
 
 
 topics_router = APIRouter(prefix="/topics")
@@ -78,6 +78,42 @@ def create_new_topic(creating_topic: CreateTopic, token: str = Header()):
         return new_topic
 
     return new_topic
+
+
+@topics_router.put("/{topic_id}/choose_best_reply")
+def choose_best_reply(topic_id: int, choose_reply: ChooseBestReply, token: str = Header()):
+    user = get_user_or_raise_401(token)
+
+    topic = topics_services.get_topic_with_replies(topic_id)
+
+    if not topic:
+        return NotFound(content=f"Topic with id:{topic_id} not found!")
+
+    category = categories_service.get_category_by_id(topic.category_id)
+
+    if not category:
+        return NotFound(content=f"The category to which the topic belongs not found!")
+
+    if category.is_locked:
+        return Forbidden(f"You cannot choose a best reply to a topic because it's category with id:{category.category_id}"
+                         f" is locked!")
+
+    if category.is_private:
+        if not categories_service.get_category_by_id(category.category_id, user.id):
+            return Forbidden(f"User does not have access to category with id:{category.category_id} because it is private!")
+
+        if topic.user_id != user.id:
+            return Forbidden(content="Only the topic author can choose the best reply!")
+
+    if not topics_services.check_reply_belongs_to_topic(choose_reply.reply_id, topic_id):
+        return BadRequest(content=f"Reply with id {choose_reply.reply_id} does not belong to the topic!")
+
+    if topic.best_reply:
+        return Forbidden(content=f"Topic with id:{topic_id} already has a best reply with id:{choose_reply.reply_id}!")
+
+    topics_services.update_best_reply(topic_id, choose_reply.reply_id)
+
+    return {"message": f"Reply with {choose_reply.reply_id} chosen successfully for best reply for topic with id:{topic_id}!"}
 
 
 @topics_router.put("/{topic_id}/lock")

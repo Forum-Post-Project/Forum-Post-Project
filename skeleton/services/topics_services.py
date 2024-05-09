@@ -34,11 +34,11 @@ def get_all_topics(search: str = None, sort_by: str = None, limit: int = 10, off
             """
         params = (user_id,)
     else:
-        base_query += " join categories c on t.category_id = c.category_id where c.is_private = 0"
+        base_query += """ join categories c on t.category_id = c.category_id where c.is_private = 0"""
         params = ()
 
     if search:
-        base_query += " and t.title like ?"
+        base_query += """" and t.title like ?"""
         params += (f"%{search}%",)
 
     # Add sorting
@@ -48,7 +48,7 @@ def get_all_topics(search: str = None, sort_by: str = None, limit: int = 10, off
         else:
             return BadRequest(content="Sorting topics only using 'oldest' or 'newest'!")
 
-    base_query += " limit ? offset ?"
+    base_query += """ limit ? offset ?"""
     params += (limit, offset)
 
     query_result = read_query(base_query, params)
@@ -57,19 +57,30 @@ def get_all_topics(search: str = None, sort_by: str = None, limit: int = 10, off
 
 
 def get_topic_with_replies(topic_id: int) -> TopicWithReplies or None:
-    topic_query = """select title, category_id, is_locked from topics where topic_id = ?"""
+    topic_query = """select title, category_id, user_id, best_reply, is_locked from topics where topic_id = ?"""
     topic_result = read_query(topic_query, (topic_id,))
     if not topic_result:
         return None
 
-    topic_title, category_id, is_locked = topic_result[0]
+    topic_title, category_id, user_id, best_reply, is_locked, = topic_result[0]
 
     reply_query = """select * from replies where topic_id = ?"""
     reply_result = read_query(reply_query, (topic_id,))
 
     replies = [Reply.from_query_result(*reply_data) for reply_data in reply_result]
 
-    return TopicWithReplies(category_id=category_id, title=topic_title, is_locked=is_locked, replies=replies)
+    return TopicWithReplies(category_id=category_id, title=topic_title, user_id=user_id, best_reply=best_reply, is_locked=is_locked, replies=replies)
+
+
+def check_reply_belongs_to_topic(reply_id: int, topic_id: int) -> bool:
+    query = """select count(*) from replies where reply_id = ? and topic_id = ?"""
+    result = read_query(query, (reply_id, topic_id))
+    return result[0][0] > 0
+
+
+def update_best_reply(topic_id: int, reply_id: int):
+    query = """update topics set best_reply = ? where topic_id = ?"""
+    update_query(query, (reply_id, topic_id))
 
 
 def get_topic(topic_id: int):

@@ -80,9 +80,15 @@ class CreateReply(BaseModel):
     text: str
 
 
+class ChooseBestReply(BaseModel):
+    reply_id: int
+
+
 class TopicWithReplies(BaseModel):
     category_id: int
     title: str
+    user_id: int
+    best_reply: int | None
     is_locked: bool
     replies: list[Reply | None]
 
