@@ -24,34 +24,33 @@ def create_topic(title: str, category_id: int, user_id: int) -> Topic or None:
 
 
 def get_all_topics(search: str = None, sort_by: str = None, limit: int = 10, offset: int = 0, user_id: int = None):
-    base_query = """SELECT t.* FROM topics t"""
+    base_query = """select t.* from topics t"""
 
     if user_id:
         base_query += """
-            JOIN categories c ON t.category_id = c.category_id
-            LEFT JOIN users_category_access uca ON c.category_id = uca.category_id
-            WHERE c.is_private = 0 OR (c.is_private = 1 AND uca.user_id = ?)
+            join categories c on t.category_id = c.category_id
+            left join users_category_access uca ON c.category_id = uca.category_id
+            where c.is_private = 0 or (c.is_private = 1 and uca.user_id = ?)
             """
         params = (user_id,)
     else:
-        base_query += " JOIN categories c ON t.category_id = c.category_id WHERE c.is_private = 0"
+        base_query += " join categories c on t.category_id = c.category_id where c.is_private = 0"
         params = ()
 
     if search:
-        base_query += " AND t.title LIKE ?"
+        base_query += " and t.title like ?"
         params += (f"%{search}%",)
 
     # Add sorting
     if sort_by:
         if sort_by.lower() in ["oldest", "newest"]:
-            base_query += " ORDER BY t.creation_date" + (" ASC" if sort_by.lower() == "oldest" else " DESC")
+            base_query += " order by t.creation_date" + (" asc" if sort_by.lower() == "oldest" else " desc")
         else:
             return BadRequest(content="Sorting topics only using 'oldest' or 'newest'!")
 
-    base_query += " LIMIT ? OFFSET ?"
+    base_query += " limit ? offset ?"
     params += (limit, offset)
 
-    # Execute query and return topics
     query_result = read_query(base_query, params)
     topics = [Topic.from_query_result(*row) for row in query_result]
     return topics
