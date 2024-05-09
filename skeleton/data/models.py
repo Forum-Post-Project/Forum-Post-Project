@@ -78,7 +78,6 @@ class Reply(BaseModel):
 
 class CreateReply(BaseModel):
     text: str
-    topic_id: int
 
 
 class TopicWithReplies(BaseModel):
