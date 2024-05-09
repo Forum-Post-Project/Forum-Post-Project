@@ -52,8 +52,26 @@ def create_new_topic(creating_topic: CreateTopic, token: str = Header()):
         return BadRequest(content="Topic title is required in order to create a topic!")
     if not creating_topic.category_id:
         return BadRequest(content="Topic can not exist without a category!")
+
     user = get_user_or_raise_401(token)
+
+    category = categories_service.get_category_by_id(creating_topic.category_id)
+
+    if not category:
+        return NotFound(content=f"Category with id:{creating_topic.category_id} not found!")
+
+    if category.is_locked:
+        return Forbidden(f"Category with id:{creating_topic.category_id} is locked and does not accept new topics")
+
+    if category.is_private:
+        if not categories_service.access_exists(user.id, creating_topic.category_id):
+            return Forbidden(f"Category with id:{creating_topic.category_id} is private! User does not have access to it!")
+
     new_topic = topics_services.create_topic(creating_topic.title, creating_topic.category_id, user.id)
+
+    if user.is_admin:
+        return new_topic
+
     return new_topic
 
 
