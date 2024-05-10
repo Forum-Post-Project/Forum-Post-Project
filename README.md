@@ -47,3 +47,18 @@ Design and implement a Forum System and provide RESTful API that can be consumed
 1. Clone the repository:
    ```bash
    git clone https://github.com/your-username/forum-post-system.git
+
+2. Install dependencies:
+   ```bash
+   pip install -r requirements.txt
+
+## Usage
+
+Start the server:
+   ```bash
+   uvicorn main:app --reload
+
+Access the API endpoints at http://localhost:8000/docs.
+
+## Credits
+
