@@ -54,11 +54,13 @@ Design and implement a Forum System and provide RESTful API that can be consumed
 
 ## Usage
 
-Start the server:
-```bash
-uvicorn main:app --reload
+1. Start the server:
+   ```bash
+   uvicorn main:app --reload
 
 Access the API endpoints at http://localhost:8000/docs.
 
 ## Credits
+
+- **Project Creators:** Kaloyan Nikolov, Veselin Totev, Ina Ignatova.
 
