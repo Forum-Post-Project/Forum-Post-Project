@@ -1,5 +1,5 @@
 from data.database import insert_query, read_query
-from data.models import Message, User
+from data.models import Message, User, GetUser
 from common.responses import CreatedSuccessfully
 from datetime import datetime
 
@@ -25,10 +25,10 @@ def get_conversation(sender_id: int, receiver_id: int) -> list[Message]:
 
 
 def get_all_conversations(user_id: int) -> list[User] or None:
-    query = """select u.user_id, u.username, u.password, u.email, u.name from users u join
+    query = """select distinct u.user_id, u.username, u.email, u.name from users u join
                (select case when sender_id = ? then receiver_id else sender_id end as user_id from messages
                where sender_id = ? or receiver_id = ?) as m on m.user_id = u.user_id"""
 
     data = read_query(query, (user_id, user_id, user_id))
 
-    return [User.from_query_result(*row) for row in data]
+    return [GetUser.from_query_result(*row) for row in data]

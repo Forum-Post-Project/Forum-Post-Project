@@ -129,7 +129,7 @@ def give_user_category_write_access(category_id: int, user_id: int, access_level
 
 
 def revoke_user_category_access(user_id: int, category_id: int):
-    query = "DELETE FROM users_category_access WHERE user_id = ? AND category_id = ?"
+    query = """"delete from users_category_access where user_id = ? and category_id = ?"""
     update_query(query, (user_id, category_id))
 
 

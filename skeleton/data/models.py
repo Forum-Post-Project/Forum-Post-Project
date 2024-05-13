@@ -151,6 +151,22 @@ class User(BaseModel):
         )
 
 
+class GetUser(BaseModel):
+    id: int
+    username: str = constr(pattern="^\w{5,20}$")
+    email: str = constr(pattern="^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$")
+    name: str = constr(pattern="^\w{2,25}$")
+
+    @classmethod
+    def from_query_result(cls, user_id, username, email, name):
+        return cls(
+            id=user_id,
+            username=username,
+            email=email,
+            name=name,
+        )
+
+
 class UserCategoryAccess(BaseModel):
     user_id: int
     username: str
