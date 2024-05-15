@@ -184,3 +184,10 @@ class LoginInformation(BaseModel):
     username: str
     password: str
 
+
+class RegistrationInformation(BaseModel):
+    username: str
+    password: str
+    email: str
+    name: str
+

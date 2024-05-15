@@ -4,6 +4,7 @@ from mariadb import IntegrityError
 from jose import jwt, JWTError
 from datetime import datetime, timedelta
 import secrets
+import bcrypt
 
 
 SECRET_KEY = secrets.token_hex(32)
@@ -13,11 +14,12 @@ TOKEN_EXPIRATION_MINUTES = 30
 
 
 def create(username: str, password: str, email: str, name: str) -> User | None:
+    hashed_password = bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt())
     try:
         generated_id = insert_query(
             """insert into users(username, password, email, name) values (?,?,?,?)""",
-            (username, password, email, name))
-        return User(id=generated_id, username=username, password='', email=email, name=name, is_admin=False)
+            (username, hashed_password.decode('utf-8'), email, name))
+        return User(id=generated_id, username=username, password=hashed_password.decode('utf-8'), email=email, name=name, is_admin=False)
     except IntegrityError:
         return None
 
