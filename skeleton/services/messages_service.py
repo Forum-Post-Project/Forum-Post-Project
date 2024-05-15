@@ -1,6 +1,5 @@
 from data.database import insert_query, read_query
 from data.models import Message, User, GetUser
-from common.responses import CreatedSuccessfully
 from datetime import datetime
 
 

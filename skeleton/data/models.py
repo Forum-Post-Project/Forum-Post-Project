@@ -183,6 +183,4 @@ class UserCategoryAccess(BaseModel):
 class LoginInformation(BaseModel):
     username: str
     password: str
-    email: str = None or None
-    name: str = None or None
-    is_admin: bool = False
+

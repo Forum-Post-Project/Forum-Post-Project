@@ -14,7 +14,7 @@ def create_new_message(receiver_id: int, creating_message: CreateMessage, token:
     sender = get_user_or_raise_401(token)
 
     if sender.id == receiver_id:
-        return Conflict(content="Sender and receiver cannot be the same user")
+        return Conflict(content="Sender and receiver cannot be the same user!")
 
     new_message = messages_service.create_message(creating_message.text, sender.id, receiver_id)
 
@@ -30,7 +30,7 @@ def get_conversation(receiver_id: int, token: str = Header()):
     sender = get_user_or_raise_401(token)
 
     if sender.id == receiver_id:
-        return Conflict(content="Sender and receiver cannot be the same user")
+        return Conflict(content="Sender and receiver cannot be the same user!")
 
     conversation = messages_service.get_conversation(sender.id, receiver_id)
 
