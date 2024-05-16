@@ -71,6 +71,9 @@ def create_new_topic(creating_topic: CreateTopic, token: str = Header()):
         if not categories_service.access_exists(user.id, creating_topic.category_id):
             return Forbidden(f"Category with id:{creating_topic.category_id} is private! User does not have access to "
                              f"it!")
+        if not categories_service.check_write_access(user.id, creating_topic.category_id):
+            return Forbidden(f"User with id:{user.id} does not have 'Write' access "
+                             f"to category with id: {creating_topic.category_id}")
 
     new_topic = topics_services.create_topic(creating_topic.title, creating_topic.category_id, user.id)
 
@@ -101,6 +104,10 @@ def choose_best_reply(topic_id: int, choose_reply: ChooseBestReply, token: str =
     if category.is_private:
         if not categories_service.get_category_by_id(category.category_id, user.id):
             return Forbidden(f"User does not have access to category with id:{category.category_id} because it is private!")
+
+        if not categories_service.check_write_access(user.id, category.category_id):
+            return Forbidden(f"User with id:{user.id} does not have 'Write' access "
+                             f"to category with id: {category.category_id}")
 
         if topic.user_id != user.id:
             return Forbidden(content="Only the topic author can choose the best reply!")

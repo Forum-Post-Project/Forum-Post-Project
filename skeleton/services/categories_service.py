@@ -139,6 +139,16 @@ def access_exists(user_id, category_id):
     return True if existing_access else False
 
 
+def check_write_access(user_id, category_id):
+    existing_access_query = """select access_level from users_category_access where user_id = ? and category_id = ?"""
+
+    existing_access = read_query(existing_access_query, (user_id, category_id))
+    if existing_access and existing_access[0][0] == "Write":
+        return True
+    else:
+        return False
+
+
 def get_privileged_users(category_id: int):
 
     query = """

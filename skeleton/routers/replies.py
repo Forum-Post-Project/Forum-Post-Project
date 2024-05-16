@@ -27,6 +27,10 @@ def create_reply(topic_id: int, creating_reply: CreateReply, token: str = Header
         if not categories_service.access_exists(user.id, category.category_id):
             return Forbidden(content=f"Topic with id:{topic_id} belongs to a private category! User does not have access to it!")
 
+        if not categories_service.check_write_access(user.id, category.category_id):
+            return Forbidden(f"User with id:{user.id} does not have 'Write' access "
+                             f"to category with id: {category.category_id}")
+
         if topic.is_locked:
             return Forbidden(content=f"Topic with id{topic_id} is locked and cannot accept replies!")
 
