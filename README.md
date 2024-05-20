@@ -38,9 +38,15 @@ Design and implement a Forum System and provide RESTful API that can be consumed
 - **Lock Topic:** Requires admin authentication. A topic can no longer accept new replies.
 - **Lock Category:** Requires admin authentication. A category can no longer accept new topics.
 
-## Framework Used
-
+## Technologies Used
 - FastAPI
+- Python
+- REST
+- JWT
+- JSON
+- Uvicorn
+- MariaDB
+- MySQL
 
 ## Installation
 
